@@ -11,10 +11,10 @@
                 <a data-ng-show="selected && selected.read_only != 'Yes'" data-ng-href="@{{ edit_url }}" class="ui small blue labeled icon button" data-ng-cloak><i class="write icon"></i>Edit</a>
                 @endcan
                 @can('destory', new \App\Role())
-                <a data-ng-show="selected && selected.deletable && selected.read_only != 'Yes'" data-ng-href="@{{ delete_url }}" class="ui small red labeled icon button" data-ng-cloak><i class="minus icon"></i> Delete</a>
+                <a data-ng-show="selected && selected.read_only != 'Yes'" data-ng-href="@{{ delete_url }}" class="ui small red labeled icon button" data-ng-cloak><i class="minus icon"></i> Delete</a>
                 @endcan
-                @can('view', new \App\Role())
-                <a data-ng-show="selected && selected.showable" data-ng-href="@{{ show_url }}" class="ui small white labeled icon button" data-ng-cloak><i class="book icon"></i> Permissions</a>
+                @can('show', new \App\Role())
+                <a data-ng-show="selected" data-ng-href="@{{ show_url }}" class="ui small white labeled icon button" data-ng-cloak><i class="book icon"></i> Permissions</a>
                 @endcan
             </div>
             <div class="panel-body">
