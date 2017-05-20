@@ -14,14 +14,29 @@ use App\Role;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Cache;
 
+/**
+ * Class RoleController
+ * @package App\Http\Controllers
+ */
 class RoleController extends Controller
 {
+    /**
+     * @var RoleRepository
+     */
     protected $roles;
+
+    /**
+     * RoleController constructor.
+     * @param RoleRepository $roles
+     */
     public function __construct(RoleRepository $roles)
     {
         $this->roles = $roles;
     }
 
+    /**
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function index()
     {
         if (request()->ajax()) {
@@ -36,6 +51,9 @@ class RoleController extends Controller
         return view('role.index', compact('breadcrumb'));
     }
 
+    /**
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function create()
     {
         $this->authorize(new Role());
@@ -49,6 +67,10 @@ class RoleController extends Controller
         return view('role.create', compact('breadcrumb'));
     }
 
+    /**
+     * @param RoleStoreRequest $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function store(RoleStoreRequest $request)
     {
         $this->authorize(new Role());
@@ -58,6 +80,10 @@ class RoleController extends Controller
         return redirect()->route('role.index');
     }
 
+    /**
+     * @param Role $role
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function edit(Role $role)
     {
         $this->authorize($role);
@@ -69,6 +95,11 @@ class RoleController extends Controller
         return view('role.edit', compact('role', 'breadcrumb'));
     }
 
+    /**
+     * @param RoleUpdateRequest $request
+     * @param Role $role
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function update(RoleUpdateRequest $request, Role $role)
     {
         $this->authorize($role);
@@ -78,6 +109,10 @@ class RoleController extends Controller
         return redirect()->route('role.index');
     }
 
+    /**
+     * @param Role $role
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function delete(Role $role)
     {
         $this->authorize($role);
@@ -89,6 +124,11 @@ class RoleController extends Controller
         return view('role.delete', compact('role', 'breadcrumb'));
     }
 
+    /**
+     * @param RoleDestroyRequest $request
+     * @param Role $role
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function destroy(RoleDestroyRequest $request, Role $role)
     {
         $this->authorize($role);
@@ -98,6 +138,12 @@ class RoleController extends Controller
         return redirect()->route('role.index');
     }
 
+    /**
+     * @param Role $role
+     * @param PolicyCategory $policyCategory
+     * @param Policy $policy
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
+     */
     public function show(Role $role, PolicyCategory $policyCategory, Policy $policy)
     {
         $this->authorize($role);
@@ -153,6 +199,9 @@ class RoleController extends Controller
         return view('role.permissions', compact('policyCategories', 'role', 'policy', 'policyMethods', 'policyEncryptions', 'policies', 'policyCategory', 'breadcrumb'));
     }
 
+    /**
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function sync()
     {
         $policyFiles = array_values(array_filter(scandir(app_path('Policies')), function($name) {
@@ -193,6 +242,10 @@ class RoleController extends Controller
         return redirect()->route('role.index');
     }
 
+    /**
+     * @param Role $role
+     * @param Policy $policy
+     */
     public function updateMethod(Role $role, Policy $policy)
     {
         $this->authorize($role);
@@ -207,6 +260,10 @@ class RoleController extends Controller
         cache()->flush();
     }
 
+    /**
+     * @param Role $role
+     * @param Policy $policy
+     */
     public function updateEncryption(Role $role, Policy $policy)
     {
         $this->authorize($role);
@@ -219,6 +276,12 @@ class RoleController extends Controller
         $role->policyEncryptions()->sync([$encryption => ['authorized' => $authorized]], false);
     }
 
+    /**
+     * @param Role $role
+     * @param PolicyCategory $policyCategory
+     * @param Policy $policy
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function changeCategory(Role $role, PolicyCategory $policyCategory, Policy $policy)
     {
         $policy->policy_category_id = $policyCategory->id;
