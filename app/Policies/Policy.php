@@ -50,40 +50,6 @@ class Policy
             return PolicyModel::get();
         });
 
-        if(starts_with($ability, 'decrypt-')) {
-            $ability = str_replace('decrypt-', '', $ability);
-            $this->rolePolicyEncryptions = Cache::rememberForever('role_policy_encryptions_' . $this->role->id, function() {
-                return $this->role->policyEncryptions()->get();
-            });
-
-            $this->policyEncryptions = Cache::rememberForever('policy_encryptions', function() {
-                return PolicyEncryption::get();
-            });
-
-            $policyClassName = class_basename(policy($model));
-//            $policy = PolicyModel::where('name', $policyClassName)->first();
-            $policy = $this->policyModel->where('name', $policyClassName)->first();
-            if ($policy) {
-                $policyEncryption = $this->policyEncryptions->where('policy_id', $policy->id)->where('name', $ability)->first();
-
-            } else {
-                $policyEncryption = false;
-            }
-            if($policyEncryption) {
-                $rolePolicyEncryption = $this->rolePolicyEncryptions->find($policyEncryption->id);
-                if($rolePolicyEncryption && $rolePolicyEncryption->pivot) {
-                    return $rolePolicyEncryption->pivot->authorized == 1 ? true : false;
-                }
-            }
-            return false;
-        }
-
-
-        $permissions = array_map('strtolower', session('delegated_permissions', []));
-        if(in_array(strtolower(class_basename($model)), $permissions)) {
-            return true;
-        }
-
         if (!($this->role instanceof Role)) {
             return false;
         }
